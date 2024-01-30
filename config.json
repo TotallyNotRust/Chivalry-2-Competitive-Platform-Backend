@@ -1,0 +1,22 @@
+[
+    {
+        "route": "login",
+        "request_type": {
+            "get": "loginInfoAction",
+            "post": "loginAction"
+        }
+    },
+    {
+        "route": "logout",
+        "request_type": {
+            "post": "logoutAction"
+        }
+    },
+    {
+        "route": "account",
+        "request_type": {
+            "post": "createAccount",
+            "delete": "deleteAccount"
+        }
+    }
+]

@@ -1,2 +1,2 @@
 pub mod hashing;
-mod tokens;
+pub mod tokens;

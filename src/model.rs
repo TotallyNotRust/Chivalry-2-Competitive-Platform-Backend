@@ -1,10 +1,6 @@
-use std::time::SystemTime;
-
-use diesel::{
-    prelude::Insertable, Associations, Identifiable, Queryable
-};
+use chrono::{Local, NaiveDateTime};
+use diesel::{prelude::Insertable, Associations, Identifiable, Queryable};
 use serde::{Deserialize, Serialize};
-use chrono::NaiveDateTime;
 
 use crate::schema::*;
 
@@ -18,6 +14,20 @@ pub struct Account {
     pub account_closed: bool,
     pub punishment_id: Option<i32>,
 }
+
+impl Account {
+    pub fn default() -> Account {
+        return Account {
+            id: 0,
+            username: "".to_owned(),
+            email: "".to_owned(),
+            salted_password: "".to_owned(),
+            account_closed: true,
+            punishment_id: None,
+        };
+    }
+}
+
 #[derive(Queryable, Insertable, Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[diesel(table_name = account)]
 pub struct NewAccount {
@@ -28,12 +38,35 @@ pub struct NewAccount {
     pub punishment_id: Option<i32>,
 }
 
-#[derive(Associations, Queryable, Insertable, Identifiable, Debug, PartialEq, Clone, Deserialize, Serialize)]
+#[derive(
+    Associations,
+    Queryable,
+    Insertable,
+    Identifiable,
+    Debug,
+    PartialEq,
+    Clone,
+    Deserialize,
+    Serialize,
+)]
 #[diesel(table_name = tokens)]
 #[diesel(belongs_to(Account))]
 pub struct Token {
     pub id: i32,
     pub token: String,
     pub account_id: i32,
-    pub valid_until: NaiveDateTime
+    pub valid_until: NaiveDateTime,
+}
+#[derive(Queryable, Insertable, Debug, PartialEq, Clone, Deserialize, Serialize)]
+#[diesel(table_name = tokens)]
+pub struct NewToken {
+    pub token: String,
+    pub account_id: i32,
+    pub valid_until: NaiveDateTime,
+}
+
+impl Token {
+    pub fn is_expired(&self) -> bool {
+        return self.valid_until.lt(&Local::now().naive_local())
+    }
 }

@@ -40,6 +40,7 @@ diesel::table! {
         token -> Varchar,
         account_id -> Integer,
         valid_until -> Timestamp,
+        invalidated -> Bool,
     }
 }
 

@@ -4,10 +4,7 @@ use model::Account;
 
 use crate::model;
 
-#[post("/account-info")]
-pub async fn account_info(
-    user: Data<Account>,
-) -> Result<impl Responder, actix_web::error::Error> {
-    println!("{:?}", user);
+#[post("/ping")]
+pub async fn ping() -> Result<impl Responder, actix_web::error::Error> {
     return Ok(HttpResponse::Ok().body("Ok"));
 }

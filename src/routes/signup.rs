@@ -1,12 +1,9 @@
-use std::env;
-use std::hash::{DefaultHasher, Hash};
-
-use actix_web::{error, get, post, web, HttpResponse, Responder, Route};
+use actix_web::{error, post, web, HttpResponse, Responder};
 use diesel::query_dsl::methods::FilterDsl;
 use diesel::ExpressionMethods;
 use diesel::{self, insert_into, BoolExpressionMethods, RunQueryDsl};
 use model::Account;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use crate::model::NewAccount;
 use crate::schema::account::dsl::{account, email, salted_password, username};

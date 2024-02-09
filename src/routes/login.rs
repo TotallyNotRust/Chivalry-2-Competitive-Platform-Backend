@@ -1,14 +1,12 @@
-use actix_web::{error, get, post, web, Responder};
+use actix_web::{error, post, web, Responder};
 use bcrypt::verify;
 use diesel::query_dsl::methods::FilterDsl;
 use diesel::ExpressionMethods;
-use diesel::{self, BoolExpressionMethods, Identifiable, RunQueryDsl};
+use diesel::{self, BoolExpressionMethods, RunQueryDsl};
 use model::Account;
 use serde::{Deserialize, Serialize};
 
-use crate::schema::account::dsl::{account, email, salted_password, username};
-use crate::schema::account::id;
-use crate::utils::hashing::hash_password;
+use crate::schema::account::dsl::{account, email, username};
 use crate::utils::tokens::generate_token;
 use crate::{establish_connection, model};
 

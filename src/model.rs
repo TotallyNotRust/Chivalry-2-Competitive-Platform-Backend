@@ -56,6 +56,7 @@ pub struct Token {
     pub token: String,
     pub account_id: i32,
     pub valid_until: NaiveDateTime,
+    pub invalidated: bool,
 }
 #[derive(Queryable, Insertable, Debug, PartialEq, Clone, Deserialize, Serialize)]
 #[diesel(table_name = tokens)]
@@ -63,10 +64,11 @@ pub struct NewToken {
     pub token: String,
     pub account_id: i32,
     pub valid_until: NaiveDateTime,
+    pub invalidated: bool,
 }
 
 impl Token {
     pub fn is_expired(&self) -> bool {
-        return self.valid_until.lt(&Local::now().naive_local())
+        return self.valid_until.lt(&Local::now().naive_utc());
     }
 }

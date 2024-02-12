@@ -4,6 +4,7 @@ use actix_web::{web, App, HttpServer};
 use diesel::{Connection, MysqlConnection};
 use dotenv::dotenv;
 use model::Account;
+use routes::matchmake::matchmake;
 use routes::ping::ping;
 use routes::{account::account_info, login::login, signup::signup};
 use std::env;
@@ -24,6 +25,8 @@ fn establish_connection() -> MysqlConnection {
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
+    env_logger::init();
+
     HttpServer::new(|| {
         App::new()
             .wrap(Cors::permissive())
@@ -35,6 +38,7 @@ async fn main() -> std::io::Result<()> {
                         .wrap(Auth)
                         .service(account_info)
                         .service(ping)
+                        .service(matchmake)
                         .app_data(Data::new(Account::default())),
                 );
             })
@@ -42,7 +46,7 @@ async fn main() -> std::io::Result<()> {
             .service(login)
             .service(signup)
     })
-    .bind(("127.0.0.1", 80))?
+    .bind(("127.0.0.1", 8081))?
     .run()
     .await
 }

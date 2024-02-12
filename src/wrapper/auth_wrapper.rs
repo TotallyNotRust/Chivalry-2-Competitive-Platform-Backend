@@ -1,11 +1,14 @@
 use std::future::{ready, Ready};
 
 use actix_web::{
-    dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
+    dev::{forward_ready, Extensions, Service, ServiceRequest, ServiceResponse, Transform},
     http::header::HeaderName,
-    Error,
+    Error, HttpMessage,
 };
 use futures_util::future::LocalBoxFuture;
+
+use actix_web::web::Bytes;
+use futures_util::stream::StreamExt;
 
 use crate::{
     model::Token,
@@ -54,7 +57,7 @@ where
 
     forward_ready!(service);
 
-    fn call(&self, req: ServiceRequest) -> Self::Future {
+    fn call(&self, mut req: ServiceRequest) -> Self::Future {
         println!("{} accessed {}", req.peer_addr().unwrap().ip(), req.path());
         let header_token = req
             .headers()
@@ -73,7 +76,25 @@ where
 
                 token_obj = Some(_token_obj.to_owned());
             }
+            //req.extensions_mut().insert(acc);
         }
+
+        let mut payload = req.take_payload();
+
+        Box::pin(async move {
+            let mut body: Vec<u8> = Vec::new();
+
+            // Accumulate bytes from the request body
+            while let Some(chunk) = payload.next().await {
+                let chunk = chunk.unwrap();
+                body.extend_from_slice(&chunk);
+            }
+
+            // Convert the accumulated bytes into actix_web::Bytes
+            let bytes = Bytes::from(body);
+
+            println!("{:?}", bytes)
+        });
 
         let fut = self.service.call(req);
 

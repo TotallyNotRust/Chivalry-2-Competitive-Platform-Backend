@@ -15,10 +15,25 @@ diesel::table! {
 }
 
 diesel::table! {
+    account_match (id) {
+        id -> Bigint,
+        match_id -> Bigint,
+        account_id -> Integer,
+    }
+}
+
+diesel::table! {
     account_ranked_info (id) {
         id -> Integer,
         account_id -> Integer,
         standing -> Integer,
+    }
+}
+
+diesel::table! {
+    c2_match (id) {
+        id -> Bigint,
+        gamemode -> Smallint,
     }
 }
 
@@ -34,6 +49,14 @@ diesel::table! {
 }
 
 diesel::table! {
+    queue (id) {
+        id -> Bigint,
+        gamemode -> Smallint,
+        account_id -> Integer,
+    }
+}
+
+diesel::table! {
     tokens (id) {
         id -> Integer,
         #[max_length = 25]
@@ -45,12 +68,18 @@ diesel::table! {
 }
 
 diesel::joinable!(account -> punishment (punishment_id));
+diesel::joinable!(account_match -> account (account_id));
+diesel::joinable!(account_match -> c2_match (match_id));
 diesel::joinable!(account_ranked_info -> account (account_id));
+diesel::joinable!(queue -> account (account_id));
 diesel::joinable!(tokens -> account (account_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     account,
+    account_match,
     account_ranked_info,
+    c2_match,
     punishment,
+    queue,
     tokens,
 );

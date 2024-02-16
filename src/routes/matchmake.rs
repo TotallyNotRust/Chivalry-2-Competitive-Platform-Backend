@@ -1,26 +1,37 @@
 use async_std::task::sleep;
+use serde_derive::Deserialize;
 use std::time::Duration;
 
-use actix_web::web::Data;
+use actix_web::web::{Data, Json};
 use actix_web::{post, HttpMessage, HttpRequest, HttpResponse, Responder};
 use model::Account;
 
 use crate::model;
 
-struct GameMode {
-    pub id: i32,
+use super::account;
+
+#[derive(Deserialize)]
+pub struct GameMode {
+    pub id: usize,
 }
 
 #[post("/matchmake")]
 pub async fn matchmake(
-    game_mode: Data<GameMode>,
+    game_mode: Json<GameMode>,
+    body: HttpRequest
 ) -> Result<impl Responder, actix_web::error::Error> {
+    let account = body.extensions().get::<Account>().unwrap().to_owned();
     println!(
-        "body {:?}, gamemode {:?}",
-        1, //body.extensions().get::<Account>(),
+        "account {:?} wants to queue gamemode {:?}",
+        account.id,
         game_mode.id
     );
-    sleep(Duration::from_secs(5)).await;
-    println!("Responding");
-    return Ok(HttpResponse::Ok().body("Ok"));
+
+    register_queue(game_mode.id, account);
+
+    return Ok(HttpResponse::Ok().body(format!("{}", game_mode.id)));
+}
+
+fn register_queue(gamemode: usize, account: Account) {
+ 
 }

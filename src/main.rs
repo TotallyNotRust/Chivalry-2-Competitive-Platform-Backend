@@ -1,3 +1,5 @@
+#![feature(ascii_char)]
+
 use actix_cors::Cors;
 use actix_web::web::Data;
 use actix_web::{web, App, HttpServer};
@@ -34,17 +36,16 @@ async fn main() -> std::io::Result<()> {
                 // Configure Bearer token authentication for specific routes
                 cfg.service(
                     web::scope("/api")
-                        //.wrap(HttpAuthentication::bearer(ok_validator))
                         .wrap(Auth)
                         .service(account_info)
                         .service(ping)
-                        .service(matchmake)
                         .app_data(Data::new(Account::default())),
                 );
             })
             // Allow access to login and signup without Bearer token authentication
             .service(login)
             .service(signup)
+            .service(matchmake)
     })
     .bind(("127.0.0.1", 8081))?
     .run()

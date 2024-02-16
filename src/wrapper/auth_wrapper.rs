@@ -2,18 +2,19 @@ use std::future::{ready, Ready};
 
 use actix_web::{
     dev::{forward_ready, Extensions, Service, ServiceRequest, ServiceResponse, Transform},
+    error::PayloadError,
     http::header::HeaderName,
     Error, HttpMessage,
 };
 use futures_util::future::LocalBoxFuture;
 
-use actix_web::web::Bytes;
-use futures_util::stream::StreamExt;
-
 use crate::{
     model::Token,
     utils::tokens::{generate_token, token_to_account},
 };
+use actix_web::web::Bytes;
+use async_std::task;
+use futures_util::stream::StreamExt;
 
 // There are two steps in middleware processing.
 // 1. Middleware initialization, middleware factory gets called with
@@ -76,25 +77,8 @@ where
 
                 token_obj = Some(_token_obj.to_owned());
             }
-            //req.extensions_mut().insert(acc);
+            req.extensions_mut().insert(acc);
         }
-
-        let mut payload = req.take_payload();
-
-        Box::pin(async move {
-            let mut body: Vec<u8> = Vec::new();
-
-            // Accumulate bytes from the request body
-            while let Some(chunk) = payload.next().await {
-                let chunk = chunk.unwrap();
-                body.extend_from_slice(&chunk);
-            }
-
-            // Convert the accumulated bytes into actix_web::Bytes
-            let bytes = Bytes::from(body);
-
-            println!("{:?}", bytes)
-        });
 
         let fut = self.service.call(req);
 

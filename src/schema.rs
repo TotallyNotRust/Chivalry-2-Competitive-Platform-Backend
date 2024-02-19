@@ -38,6 +38,16 @@ diesel::table! {
 }
 
 diesel::table! {
+    chat (id) {
+        id -> Bigint,
+        #[max_length = 255]
+        chat_text -> Varchar,
+        sent_by_id -> Integer,
+        room_id -> Bigint,
+    }
+}
+
+diesel::table! {
     punishment (id) {
         id -> Integer,
         #[sql_name = "type"]
@@ -57,6 +67,20 @@ diesel::table! {
 }
 
 diesel::table! {
+    room (id) {
+        id -> Bigint,
+    }
+}
+
+diesel::table! {
+    room_access (id) {
+        id -> Bigint,
+        account_id -> Integer,
+        room_id -> Bigint,
+    }
+}
+
+diesel::table! {
     tokens (id) {
         id -> Integer,
         #[max_length = 25]
@@ -71,7 +95,11 @@ diesel::joinable!(account -> punishment (punishment_id));
 diesel::joinable!(account_match -> account (account_id));
 diesel::joinable!(account_match -> c2_match (match_id));
 diesel::joinable!(account_ranked_info -> account (account_id));
+diesel::joinable!(chat -> account (sent_by_id));
+diesel::joinable!(chat -> room (room_id));
 diesel::joinable!(queue -> account (account_id));
+diesel::joinable!(room_access -> account (account_id));
+diesel::joinable!(room_access -> room (room_id));
 diesel::joinable!(tokens -> account (account_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
@@ -79,7 +107,10 @@ diesel::allow_tables_to_appear_in_same_query!(
     account_match,
     account_ranked_info,
     c2_match,
+    chat,
     punishment,
     queue,
+    room,
+    room_access,
     tokens,
 );

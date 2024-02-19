@@ -47,7 +47,7 @@ async fn main() -> std::io::Result<()> {
             .service(signup)
             .service(matchmake)
     })
-    .bind(("127.0.0.1", 8081))?
+    .bind(("192.168.1.112", 8081))?
     .run()
     .await
 }

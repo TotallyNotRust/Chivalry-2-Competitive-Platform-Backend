@@ -1,7 +1,7 @@
 use crate::{
     establish_connection,
-    model::{Account, NewToken, Token},
-    schema::{
+    lib::database::model::{Account, NewToken, Token},
+    lib::database::schema::{
         account::dsl::{account, id as account_id},
         tokens::dsl::{id as token_id, invalidated, token, tokens},
     },
@@ -40,7 +40,11 @@ fn _generate_token() -> String {
 }
 
 fn _invalidate_tokens(_token: Token) {
-    diesel::update(tokens).set(invalidated.eq(true)).filter(token_id.eq(_token.id)).execute(&mut establish_connection()).unwrap();
+    diesel::update(tokens)
+        .set(invalidated.eq(true))
+        .filter(token_id.eq(_token.id))
+        .execute(&mut establish_connection())
+        .unwrap();
 }
 
 pub fn token_to_account(_token: &str) -> Option<(Account, Token)> {

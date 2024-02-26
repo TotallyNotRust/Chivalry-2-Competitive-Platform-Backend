@@ -1,8 +1,8 @@
 use actix_web::web::Data;
 use actix_web::{post, HttpResponse, Responder};
-use model::Account;
+use lib::database::model::Account;
 
-use crate::model;
+use crate::lib;
 
 #[post("/ping")]
 pub async fn ping() -> Result<impl Responder, actix_web::error::Error> {

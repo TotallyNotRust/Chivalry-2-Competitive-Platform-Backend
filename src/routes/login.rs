@@ -3,12 +3,12 @@ use bcrypt::verify;
 use diesel::query_dsl::methods::FilterDsl;
 use diesel::ExpressionMethods;
 use diesel::{self, BoolExpressionMethods, RunQueryDsl};
-use model::Account;
+use lib::database::model::Account;
 use serde::{Deserialize, Serialize};
 
-use crate::schema::account::dsl::{account, email, username};
+use crate::lib::database::schema::account::dsl::{account, email, username};
 use crate::utils::tokens::generate_token;
-use crate::{establish_connection, model};
+use crate::{establish_connection, lib};
 
 #[derive(Deserialize, Debug)]
 struct Login {

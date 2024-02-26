@@ -2,13 +2,13 @@ use actix_web::{error, post, web, HttpResponse, Responder};
 use diesel::query_dsl::methods::FilterDsl;
 use diesel::ExpressionMethods;
 use diesel::{self, insert_into, BoolExpressionMethods, RunQueryDsl};
-use model::Account;
+use lib::database::model::Account;
 use serde::Deserialize;
 
-use crate::model::NewAccount;
-use crate::schema::account::dsl::{account, email, salted_password, username};
+use crate::lib::database::model::NewAccount;
+use crate::lib::database::schema::account::dsl::{account, email, salted_password, username};
 use crate::utils::hashing::hash_password;
-use crate::{establish_connection, model};
+use crate::{establish_connection, lib};
 
 #[derive(Deserialize, Debug)]
 struct Login {
@@ -29,7 +29,7 @@ pub async fn signup(login: web::Form<Login>) -> Result<impl Responder, actix_web
     match acc {
         Ok(acc) => {
             if acc.len() == 0 {
-                let password= hash_password(&login.password);
+                let password = hash_password(&login.password);
 
                 if password == None {
                     println!("failed to hash password");
@@ -44,14 +44,16 @@ pub async fn signup(login: web::Form<Login>) -> Result<impl Responder, actix_web
                     punishment_id: None,
                 };
 
-                match insert_into(account).values::<NewAccount>(new_acc).execute(&mut establish_connection()) {
+                match insert_into(account)
+                    .values::<NewAccount>(new_acc)
+                    .execute(&mut establish_connection())
+                {
                     Ok(_) => return Ok(HttpResponse::Ok()),
                     Err(err) => {
                         println!("Got error while trying to create account: {}", err);
                         return Err(error::ErrorInternalServerError("Failed to create account"));
-                    } 
+                    }
                 }
-                 
             } else {
                 return Err(error::ErrorConflict("Email already in use"));
             }

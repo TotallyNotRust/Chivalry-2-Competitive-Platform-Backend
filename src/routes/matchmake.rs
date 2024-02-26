@@ -4,9 +4,9 @@ use std::time::Duration;
 
 use actix_web::web::{Data, Json};
 use actix_web::{post, HttpMessage, HttpRequest, HttpResponse, Responder};
-use model::Account;
+use lib::database::model::Account;
 
-use crate::model;
+use crate::lib;
 
 use super::account;
 
@@ -18,13 +18,12 @@ pub struct GameMode {
 #[post("/matchmake")]
 pub async fn matchmake(
     game_mode: Json<GameMode>,
-    body: HttpRequest
+    body: HttpRequest,
 ) -> Result<impl Responder, actix_web::error::Error> {
     let account = body.extensions().get::<Account>().unwrap().to_owned();
     println!(
         "account {:?} wants to queue gamemode {:?}",
-        account.id,
-        game_mode.id
+        account.id, game_mode.id
     );
 
     register_queue(game_mode.id, account);
@@ -32,6 +31,4 @@ pub async fn matchmake(
     return Ok(HttpResponse::Ok().body(format!("{}", game_mode.id)));
 }
 
-fn register_queue(gamemode: usize, account: Account) {
- 
-}
+fn register_queue(gamemode: usize, account: Account) {}

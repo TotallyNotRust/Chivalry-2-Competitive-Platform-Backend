@@ -9,7 +9,7 @@ use actix_web::{
 use futures_util::future::LocalBoxFuture;
 
 use crate::{
-    model::Token,
+    lib::database::model::Token,
     utils::tokens::{generate_token, token_to_account},
 };
 use actix_web::web::Bytes;

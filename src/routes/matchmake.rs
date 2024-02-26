@@ -20,15 +20,17 @@ pub async fn matchmake(
     game_mode: Json<GameMode>,
     body: HttpRequest,
 ) -> Result<impl Responder, actix_web::error::Error> {
-    let account = body.extensions().get::<Account>().unwrap().to_owned();
-    println!(
-        "account {:?} wants to queue gamemode {:?}",
-        account.id, game_mode.id
-    );
+    return Ok(HttpResponse::Ok().body("Depricated, please use matchmakers api"));
 
-    register_queue(game_mode.id, account);
+    // let account = body.extensions().get::<Account>().unwrap().to_owned();
+    // println!(
+    //     "account {:?} wants to queue gamemode {:?}",
+    //     account.id, game_mode.id
+    // );
 
-    return Ok(HttpResponse::Ok().body(format!("{}", game_mode.id)));
+    // register_queue(game_mode.id, account);
+
+    // return Ok(HttpResponse::Ok().body(format!("{}", game_mode.id)));
 }
 
 fn register_queue(gamemode: usize, account: Account) {}

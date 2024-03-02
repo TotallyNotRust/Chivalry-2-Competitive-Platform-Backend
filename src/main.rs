@@ -40,13 +40,13 @@ async fn main() -> std::io::Result<()> {
                         .service(ping)
                         .app_data(Data::new(Account::default())),
                 );
-            })
+            })  
             // Allow access to login and signup without Bearer token authentication
             .service(login)
             .service(signup)
             .service(matchmake)
     })
-    .bind(("192.168.1.112", 8081))?
+    .bind(("172.21.123.57", 8081))?
     .run()
     .await
 }

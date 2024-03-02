@@ -14,7 +14,7 @@ RUN ./rustup-install.sh -y
 
 RUN ~/.cargo/bin/cargo build
 
-EXPOSE 80
+EXPOSE 8081
 
-ENTRYPOINT [ "./target/debug/city" ]
+ENTRYPOINT [ "./target/release/city" ]
 #ENTRYPOINT [ "sleep", "infinity" ]

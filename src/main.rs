@@ -44,7 +44,6 @@ async fn main() -> std::io::Result<()> {
             // Allow access to login and signup without Bearer token authentication
             .service(login)
             .service(signup)
-            .service(matchmake)
     })
     .bind(("0.0.0.0", 8081))?
     .run()
